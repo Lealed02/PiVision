@@ -105,7 +105,7 @@ def main():
       '--model',
       help='Path of the object detection model.',
       required=False,
-      default='pong350_float32.tflite')
+      default='pong350_float16.tflite')
   parser.add_argument(
       '--cameraId', help='Id of camera.', required=False, type=int, default=0)
   parser.add_argument(
