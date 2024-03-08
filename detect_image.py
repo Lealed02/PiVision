@@ -60,7 +60,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
 
   # Continuously capture images from the camera and run inference
   while True:
-    image = cv2.imread("table.jpg")
+    image = cv2.imread("sample.jpg")
 
     counter += 1
     image = cv2.flip(image, 1)
@@ -105,7 +105,7 @@ def main():
       '--model',
       help='Path of the object detection model.',
       required=False,
-      default='efficientdet_lite0.tflite')
+      default='pong350_float32.tflite')
   parser.add_argument(
       '--cameraId', help='Id of camera.', required=False, type=int, default=0)
   parser.add_argument(
