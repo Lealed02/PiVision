@@ -34,7 +34,7 @@ _, img = cap.read()
 
 while True:
     _, img = cap.read()
-    img = cv2.imread("DSC_2716-min.jpg")
+    
     result_img, _ = predict_and_detect(model, img, classes=[], conf=0.5)
     cv2.imshow('YOLO V8 Detection', result_img)     
 
