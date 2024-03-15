@@ -7,16 +7,17 @@ from torchvision import models, transforms
 import cv2
 from PIL import Image
 
-
-
 torch.backends.quantized.engine = 'qnnpack'
 
+############################
+# This project was originally made for the Pi4. Due to changes in the camera drivers
+# this needs to be converted to work with picamera2
+# See # OLD and # NEW tags for changes
+ 
 
-from picamera2 import Picamera2
 
-picam2 = Picamera2()
-picam2.configure(picam2.create_preview_configuration(main={"format":"XRGB8888", "size" : (640,640)}))
-picam2.start()
+
+
 
 
 # OLD
@@ -27,8 +28,13 @@ picam2.start()
 
 
 # NEW
+from picamera2 import Picamera2
+picam2 = Picamera2()
+
 picam2.configure(picam2.create_preview_configuration(main={"format":"RGB888", "size" : (640,640)}))
 picam2.start()
+
+
 
 preprocess = transforms.Compose([
     transforms.ToTensor(),
@@ -46,11 +52,18 @@ frame_count = 0
 with torch.no_grad():
     while True:
         # read frame
+
+        # OLD
+        # ret, img = cap.read()
+
+        # NEW
         image = picam2.capture_array()
-   
+
+        # MAYBE INCOMPATIBLE
         # convert opencv output from BGR to RGB
         image = image[:, :, [2, 1, 0]]
         permuted = image
+        # MAY INCOMPATIBLE
 
         # preprocess
         input_tensor = preprocess(image)
