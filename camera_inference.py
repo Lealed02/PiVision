@@ -1,11 +1,19 @@
 import cv2
 from ultralytics import YOLO
-model = YOLO("350A.pt")
+from picamera2 import Picamera2
+
+picam2 = Picamera2()
+picam2.configure(picam2.create_preview_configuration(main={"format":"RGB888", "size" : (640,640)}))
+picam2.start()
+
+model = YOLO("100A.pt") # Default
 
 
 def predict(chosen_model, img, classes=[], conf=0.5):
+    
     if classes:
         results = chosen_model.predict(img, classes=classes, conf=conf)
+        exit()
     else:
         results = chosen_model.predict(img, conf=conf)
 
@@ -24,22 +32,16 @@ def predict_and_detect(chosen_model, img, classes=[], conf=0.5):
                         cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 1)
     return img, results
 
-model = YOLO('350A.pt')
-cap = cv2.VideoCapture(0)
-cap.set(3, 650)
-cap.set(4, 650)
-_, img = cap.read()
-
-#result_img = predict_and_detect(model, img, classes=[], conf=0.5)
+model = YOLO('100A.pt') # Override default, 100A sometimes performs better than 300A
 
 while True:
-    _, img = cap.read()
+    img = picam2.capture_array()
     
     result_img, _ = predict_and_detect(model, img, classes=[], conf=0.5)
+    
     cv2.imshow('YOLO V8 Detection', result_img)     
 
-    if cv2.waitKey(1) & 0xFF == ord(' '):
+    if cv2.waitKey(0) & 0xFF == ord(' '):
         break
 
-cap.release()
 cv2.destroyAllWindows()
