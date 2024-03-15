@@ -47,7 +47,7 @@ preprocess = transforms.Compose([
 # jit model to take it from ~20fps to ~30fps
 #net = torch.jit.script(net)
 
-net = torch.jit.load("100A.pt")
+net = torch.jit.load("100A.torchscript")
 import sys
 sys 
 started = time.time()
