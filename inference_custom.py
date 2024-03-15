@@ -4,6 +4,7 @@ import torch
 import numpy as np
 from torchvision import models, transforms
 
+
 import cv2
 from PIL import Image
 
@@ -32,6 +33,7 @@ from picamera2 import Picamera2
 picam2 = Picamera2()
 
 picam2.configure(picam2.create_preview_configuration(main={"format":"RGB888", "size" : (640,640)}))
+picam2.set_controls({"FrameRate": 36})
 picam2.start()
 
 
@@ -41,12 +43,13 @@ preprocess = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
-net = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
-print(net)
-exit()
+#net = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
 # jit model to take it from ~20fps to ~30fps
-net = torch.jit.script(net)
+#net = torch.jit.script(net)
 
+net = torch.jit.load("100A.pt")
+import sys
+sys 
 started = time.time()
 last_logged = time.time()
 frame_count = 0
@@ -63,16 +66,20 @@ with torch.no_grad():
 
         # MAYBE INCOMPATIBLE
         # convert opencv output from BGR to RGB
-        image = image[:, :, [2, 1, 0]]
-        permuted = image
+        #image = Image.fromarray(image, mode="RGB")
+        #image = image[:, :, [2, 1, 0]]
+        #permuted = image
+        
+
         # MAY INCOMPATIBLE
 
         # preprocess
         input_tensor = preprocess(image)
 
         # create a mini-batch as expected by the model
+        #input_batch = image
         input_batch = input_tensor.unsqueeze(0)
-
+        
         # run model
         output = net(input_batch)
         # do something with output ...

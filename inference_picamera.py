@@ -42,8 +42,7 @@ preprocess = transforms.Compose([
 ])
 
 net = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
-print(net)
-exit()
+
 # jit model to take it from ~20fps to ~30fps
 net = torch.jit.script(net)
 
