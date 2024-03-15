@@ -1,6 +1,7 @@
 import cv2
 from ultralytics import YOLO
 from picamera2 import Picamera2
+import time 
 
 picam2 = Picamera2()
 picam2.configure(picam2.create_preview_configuration(main={"format":"RGB888", "size" : (640,640)}))
@@ -37,15 +38,22 @@ model = YOLO('350A.pt')
 
 #result_img = predict_and_detect(model, img, classes=[], conf=0.5)
 
+started = time.time()
+last_logged = time.time()
+frame_count = 0
+
 while True:
     img = picam2.capture_array()
     
     result_img, _ = predict_and_detect(model, img, classes=[], conf=0.5)
     
-    cv2.imshow('YOLO V8 Detection', result_img)     
+    #cv2.imshow('YOLO V8 Detection', result_img)   
+    
+    frame_count += 1
+    now = time.time()
+    if now - last_logged > 1:
+        print(f"{frame_count / (now-last_logged)} fps")
+        last_logged = now
+        frame_count = 0  
 
-    if cv2.waitKey(1) & 0xFF == ord(' '):
-        break
 
-
-cv2.destroyAllWindows()
